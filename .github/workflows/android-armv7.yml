@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build
+          sudo apt-get install -y ninja-build protobuf-compiler
 
       - name: Setup Java
         uses: actions/setup-java@v5
@@ -47,7 +47,7 @@ jobs:
         uses: mozilla-actions/sccache-action@v0.0.10
 
       - name: Configure CMake
-        run: cmake --preset x-android-ci-armv7
+        run: cmake --preset x-android-ci-armv7 -DPROTOC_EXECUTABLE=$(which protoc)
 
       - name: Build Dusklight
         run: cmake --build --preset x-android-ci-armv7 --target dusklight
