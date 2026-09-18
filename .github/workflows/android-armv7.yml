@@ -25,6 +25,12 @@ jobs:
           sed -i 's/ByteBuffer data{size};/ByteBuffer data{static_cast<size_t>(size)};/' extern/aurora/lib/gfx/texture_replacement.cpp
           sed -i 's/ByteBuffer blob{n};/ByteBuffer blob{static_cast<size_t>(n)};/' extern/aurora/lib/gfx/texture_replacement.cpp
 
+      - name: Patch endian + mod ABI for 32-bit ARM
+        run: |
+          sed -i 's/defined(__aarch64__) || defined(_M_X64)/defined(__aarch64__) || defined(__arm__) || defined(_M_X64)/' include/helpers/endian.h
+          sed -i 's/static_assert(sizeof(ModMetaHookFn) == 24);/#if DUSK_CODE_MODS\nstatic_assert(sizeof(ModMetaHookFn) == 24);\n#endif/' sdk/include/mods/api.h
+          sed -i 's/static_assert(sizeof(ModMetaHookMemExt) == 24);/#if DUSK_CODE_MODS\nstatic_assert(sizeof(ModMetaHookMemExt) == 24);\n#endif/' sdk/include/mods/api.h
+
       - name: Install dependencies
         run: |
           sudo apt-get update
