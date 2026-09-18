@@ -1,0 +1,95 @@
+```yaml
+name: Android ARMv7
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'CMakePresets.json'
+      - 'CMakeLists.txt'
+      - 'src/**'
+      - 'extern/**'
+      - 'platforms/android/**'
+      - '.github/workflows/android-armv7.yml'
+
+concurrency:
+  group: android-armv7-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ANDROID_NDK_VERSION: "29.0.14206865"
+  SCCACHE_GHA_ENABLED: "true"
+  RUSTC_WRAPPER: "sccache"
+
+jobs:
+  build-android-armv7:
+    name: Build Android armeabi-v7a
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
+
+      - name: Install Android SDK and NDK
+        run: |
+          sdkmanager \
+            "platforms;android-36" \
+            "build-tools;36.1.0" \
+            "ndk;${ANDROID_NDK_VERSION}"
+
+      - name: Setup Rust
+        run: |
+          rustup toolchain install stable
+          rustup target add armv7-linux-androideabi
+
+      - name: Setup sccache
+        uses: mozilla-actions/sccache-action@v0.0.10
+
+      - name: Configure CMake
+        run: |
+          cmake --preset x-android-ci-armv7
+
+      - name: Build Dusklight
+        run: |
+          cmake --build --preset x-android-ci-armv7 --target dusklight
+
+      - name: Build bundled mods
+        run: |
+          cmake --build --preset x-android-ci-armv7 --target dusklight_mods
+
+      - name: Build APK
+        working-directory: platforms/android
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleRelease --rerun-tasks
+
+      - name: List generated APKs
+        run: |
+          find platforms/android/app/build/outputs/apk -type f -name "*.apk" -print
+
+      - name: Upload ARMv7 APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: dusklight-android-armeabi-v7a
+          path: |
+            platforms/android/app/build/outputs/apk/release/*.apk
+```
