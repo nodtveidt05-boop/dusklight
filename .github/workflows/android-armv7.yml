@@ -31,6 +31,10 @@ jobs:
           sed -i 's/static_assert(sizeof(ModMetaHookFn) == 24);/#if DUSK_CODE_MODS\nstatic_assert(sizeof(ModMetaHookFn) == 24);\n#endif/' sdk/include/mods/api.h
           sed -i 's/static_assert(sizeof(ModMetaHookMemExt) == 24);/#if DUSK_CODE_MODS\nstatic_assert(sizeof(ModMetaHookMemExt) == 24);\n#endif/' sdk/include/mods/api.h
 
+      - name: Skip Android mod-export step when code mods are disabled
+        run: |
+          perl -0777 -pi -e 's/elseif \(ANDROID\)\n    include\(cmake\/AndroidExports\.cmake\)\n    setup_android_exports\(dusklight\)\n/elseif (ANDROID)\n    if (DUSK_ENABLE_CODE_MODS)\n        include(cmake\/AndroidExports.cmake)\n        setup_android_exports(dusklight)\n    endif ()\n/' CMakeLists.txt
+
       - name: Install dependencies
         run: |
           sudo apt-get update
