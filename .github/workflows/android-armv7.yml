@@ -20,6 +20,11 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
+      - name: Patch Aurora for 32-bit narrowing
+        run: |
+          sed -i 's/ByteBuffer data{size};/ByteBuffer data{static_cast<size_t>(size)};/' extern/aurora/lib/gfx/texture_replacement.cpp
+          sed -i 's/ByteBuffer blob{n};/ByteBuffer blob{static_cast<size_t>(n)};/' extern/aurora/lib/gfx/texture_replacement.cpp
+
       - name: Install dependencies
         run: |
           sudo apt-get update
