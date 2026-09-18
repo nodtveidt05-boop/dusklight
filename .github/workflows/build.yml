@@ -15,7 +15,6 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('run-{0}', github.run_id) }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
 env:
   SCCACHE_GHA_ENABLED: "true"
   RUSTC_WRAPPER: "sccache"
@@ -25,7 +24,6 @@ jobs:
   build-linux:
     name: Build Linux (${{matrix.name}})
     runs-on: ${{matrix.runner}}
-
     strategy:
       fail-fast: false
       matrix:
@@ -42,13 +40,11 @@ jobs:
           #   runner: ubuntu-latest
           #   preset: clang
           #   artifact_arch: x86_64
-
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: recursive
-
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -57,7 +53,6 @@ jobs:
             libpulse-dev libudev-dev libpng-dev libncurses5-dev libx11-xcb-dev libfreetype-dev \
             libxinerama-dev libxcursor-dev python3-markupsafe libgtk-3-dev libssl-dev \
             libxss-dev libfuse2 libusb-1.0-0-dev libdecor-0-dev libpipewire-0.3-dev libunwind-dev
-
       - name: Setup sccache
         uses: mozilla-actions/sccache-action@v0.0.10
 
@@ -72,7 +67,6 @@ jobs:
 
       - name: Generate AppImage
         run: ci/build-appimage.sh
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -105,7 +99,6 @@ jobs:
           #   platform: tvos
           #   preset: x-tvos-ci
           #   artifact_name: tvos-appleclang-arm64
-
     steps:
       - uses: actions/checkout@v6
         with:
@@ -164,6 +157,11 @@ jobs:
             abi: arm64-v8a
             artifact_arch: arm64
             rust_target: aarch64-linux-android
+          - name: Clang armeabi-v7a
+            preset: x-android-ci-armv7
+            abi: armeabi-v7a
+            artifact_arch: armv7
+            rust_target: armv7-linux-androideabi
 
     env:
       ANDROID_NDK_VERSION: "29.0.14206865"
@@ -229,7 +227,6 @@ jobs:
   build-windows:
     name: Build Windows (${{matrix.name}})
     runs-on: ${{matrix.runner}}
-
     strategy:
       fail-fast: false
       matrix:
@@ -252,7 +249,6 @@ jobs:
           #   msvc_arch: amd64
           #   vcpkg_arch: x64
           #   artifact_arch: x86_64
-
     steps:
       - uses: actions/checkout@v6
         with:
