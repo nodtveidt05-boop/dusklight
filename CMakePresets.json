@@ -146,6 +146,7 @@
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_LINKER_TYPE": "LLD",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install",
         "CMAKE_DISABLE_FIND_PACKAGE_PkgConfig": {
           "type": "BOOL",
@@ -407,6 +408,16 @@
       }
     },
     {
+      "name": "android-armv7",
+      "displayName": "Android (armeabi-v7a)",
+      "inherits": [
+        "android-base"
+      ],
+      "cacheVariables": {
+        "ANDROID_ABI": "armeabi-v7a"
+      }
+    },
+    {
       "name": "android-x86_64",
       "displayName": "Android (x86_64)",
       "inherits": [
@@ -439,6 +450,17 @@
       "cacheVariables": {
         "ANDROID_ABI": "arm64-v8a",
         "Rust_CARGO_TARGET": "aarch64-linux-android"
+      }
+    },
+    {
+      "name": "x-android-ci-armv7",
+      "binaryDir": "${sourceDir}/build/android-armv7",
+      "inherits": [
+        "x-android-ci"
+      ],
+      "cacheVariables": {
+        "ANDROID_ABI": "armeabi-v7a",
+        "Rust_CARGO_TARGET": "armv7-linux-androideabi"
       }
     },
     {
@@ -646,6 +668,15 @@
       ]
     },
     {
+      "name": "android-armv7",
+      "configurePreset": "android-armv7",
+      "description": "Android armeabi-v7a release build with debug info",
+      "displayName": "Android armeabi-v7a RelWithDebInfo",
+      "targets": [
+        "dusklight"
+      ]
+    },
+    {
       "name": "android-x86_64",
       "configurePreset": "android-x86_64",
       "description": "Android x86_64 release build with debug info",
@@ -659,6 +690,15 @@
       "configurePreset": "x-android-ci-arm64",
       "description": "(Internal) Android CI arm64-v8a",
       "displayName": "(Internal) Android CI arm64-v8a",
+      "targets": [
+        "dusklight"
+      ]
+    },
+    {
+      "name": "x-android-ci-armv7",
+      "configurePreset": "x-android-ci-armv7",
+      "description": "(Internal) Android CI armeabi-v7a",
+      "displayName": "(Internal) Android CI armeabi-v7a",
       "targets": [
         "dusklight"
       ]
