@@ -35,6 +35,11 @@ jobs:
         run: |
           perl -0777 -pi -e 's/elseif \(ANDROID\)\n    include\(cmake\/AndroidExports\.cmake\)\n    setup_android_exports\(dusklight\)\n/elseif (ANDROID)\n    if (DUSK_ENABLE_CODE_MODS)\n        include(cmake\/AndroidExports.cmake)\n        setup_android_exports(dusklight)\n    endif ()\n/' CMakeLists.txt
 
+      - name: Point Gradle config at armv7 build output
+        run: |
+          sed -i "s/build\/android-arm64/build\/android-armv7/g" platforms/android/app/build.gradle
+          sed -i "s/abis: \['arm64-v8a'\]/abis: ['armeabi-v7a']/" platforms/android/app/build.gradle
+
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -66,9 +71,6 @@ jobs:
 
       - name: Build Dusklight
         run: cmake --build --preset x-android-ci-armv7 --target dusklight
-
-      - name: Build bundled mods
-        run: cmake --build --preset x-android-ci-armv7 --target dusklight_mods
 
       - name: Build APK
         working-directory: platforms/android
