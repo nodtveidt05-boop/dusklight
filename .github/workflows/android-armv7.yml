@@ -47,7 +47,7 @@ jobs:
         uses: mozilla-actions/sccache-action@v0.0.10
 
       - name: Configure CMake
-        run: cmake --preset x-android-ci-armv7 -DPROTOC_EXECUTABLE=$(which protoc)
+        run: cmake --preset x-android-ci-armv7 -DPROTOC_EXECUTABLE=$(which protoc) -DDUSK_ENABLE_CODE_MODS=OFF
 
       - name: Build Dusklight
         run: cmake --build --preset x-android-ci-armv7 --target dusklight
